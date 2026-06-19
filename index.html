@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Тест</title>
+<title>Тест по макроэкономике</title>
 
 <style>
 *{box-sizing:border-box}
@@ -188,24 +188,28 @@ let selectedCount = 25;
 let timeLeft = 30 * 60;
 let timerInterval;
 
+// Загрузка вопросов из файла questions.txt
 fetch("questions.txt")
 .then(r => r.text())
 .then(text => {
+  // Делим текст на отдельные блоки вопросов по разделителю +++++
   const blocks = text.split(/\+{3,}/);
 
   blocks.forEach(block => {
+    // Делим каждый блок на вопрос и ответы по разделителю =====
     let parts = block
       .split(/={3,}/)
       .map(x => x.trim())
       .filter(x => x.length > 0);
 
-    if(parts.length >= 5){
-      let q = parts[0].replace(/^\d+\.\s*/, "");
-      let answers = [parts[1], parts[2], parts[3], parts[4]];
+    // Проверяем наличие минимум 6 частей: 1 вопрос + 5 вариантов ответа
+    if(parts.length >= 6){
+      let q = parts[0];
+      let answers = [parts[1], parts[2], parts[3], parts[4], parts[5]];
 
       allQuestions.push({
         question: q,
-        correct: parts[1],
+        correct: parts[1], // Первый ответ в блоке считается верным
         answers: shuffleArray(answers)
       });
     }
@@ -217,9 +221,14 @@ function shuffleArray(arr){
 }
 
 function startQuiz(count){
-  if(allQuestions.length < count){
-    alert("В questions.txt меньше вопросов, чем выбрано");
+  if(allQuestions.length === 0){
+    alert("Ошибка: вопросы не загрузились. Проверьте файл questions.txt");
     return;
+  }
+
+  if(allQuestions.length < count){
+    alert("В файле всего " + allQuestions.length + " вопросов. Запускаю тест со всеми доступными вопросами.");
+    count = allQuestions.length;
   }
 
   selectedCount = count;
